@@ -1,24 +1,57 @@
 import './employees-list-item.css';
+import { Component } from "react";
 
-const EmployeesListItem = () => {
-    return (
-        <li className="list-group-item d-flex justify-content-between">
-            <span className="list-group-item-label">John Smith</span>
-            <input type="text" className="list-group-item-input" defaultValue="1000$"/>
-            <div className='d-flex justify-content-center align-items-center'>
-                <button type="button"
-                    className="btn-cookie btn-sm ">
-                    <i className="fas fa-cookie"></i>
-                </button>
+class EmployeesListItem extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            increase: false,
+            favorite: false
+        };
+        this.addFavorite = this.addFavorite.bind(this);
+    }
 
-                <button type="button"
-                        className="btn-trash btn-sm ">
-                    <i className="fas fa-trash"></i>
-                </button>
-                <i className="fas fa-star"></i>
-            </div>
-        </li>
-    )
+    changeIncrease = () => {
+        this.setState(({ increase }) => ({
+            increase: !increase
+        }));
+    };
+
+    addFavorite() {
+        this.setState(({ favorite }) => ({
+            favorite: !favorite
+        }));
+    }
+
+    render() {
+        const { name, salary, onDelete } = this.props;
+        const { increase, favorite } = this.state;
+
+        const listClassNames = `list-group-item d-flex justify-content-between 
+                                ${increase ? 'increase' : ''}
+                                ${favorite ? 'like' : ''}`;
+
+        return (
+            <li className={listClassNames} >
+                <span className="list-group-item-label" onClick={this.addFavorite}>{ name }</span>
+                <input type="text" className="list-group-item-input" defaultValue={salary + '$'}/>
+                <div className='d-flex justify-content-center align-items-center'>
+                    <button type="button"
+                            onClick={this.changeIncrease}
+                            className="btn-cookie btn-sm ">
+                        <i className="fas fa-cookie"/>
+                    </button>
+
+                    <button type="button"
+                            className="btn-trash btn-sm "
+                            onClick={onDelete}>
+                        <i className="fas fa-trash"/>
+                    </button>
+                    <i className="fas fa-star"/>
+                </div>
+            </li>
+        )
+    }
 }
 
 export default EmployeesListItem;
