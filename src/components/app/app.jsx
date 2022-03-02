@@ -14,9 +14,9 @@ class App extends Component {
         super(props);
         this.state = {
             data: [
-                { name: 'John S.', salary: 990, increase: false, id: 1},
-                { name: 'Alfred T.', salary: 630, increase: true, id: 2},
-                { name: 'James K.', salary: 1710, increase: false, id: 3},
+                { name: 'John S.', salary: 990, increase: false, rise: true, id: 1},
+                { name: 'Alfred T.', salary: 630, increase: true, rise: false, id: 2},
+                { name: 'James K.', salary: 1710, increase: false, rise: false, id: 3},
             ],
         }
     }
@@ -28,17 +28,31 @@ class App extends Component {
     };
 
     addNewEmployee = (name, salary) => {
-        const newEmployee = { name, salary, increase: false, id: nextId() }
+        const newEmployee = { name, salary, increase: false, rise: false, id: nextId() }
 
         this.setState(({ data }) => ({
             data: [ ...data, newEmployee ]
         }));
     };
 
+    onToggleProp = (id, prop) => {
+        this.setState(({ data }) => ({
+            data: data.map(employee => {
+                if (employee.id === id) {
+                    return { ...employee, [prop]: !employee[prop] }
+                }
+                return employee
+            })
+        }));
+    };
+
+    countPremiumEmployees = () => this.state.data.filter(item => item.increase).length
+
+
     render() {
         return (
             <div className="app">
-                <AppInfo />
+                <AppInfo allEmployees={this.state.data.length} countPremiumEmployees={this.countPremiumEmployees}/>
 
                 <div className="search-panel">
                     <SearchPanel/>
@@ -47,7 +61,8 @@ class App extends Component {
 
                 <EmployeesList
                     data={this.state.data}
-                    deleteEmployee={this.deleteEmployee}/>
+                    deleteEmployee={this.deleteEmployee}
+                    onToggleProp={this.onToggleProp} />
 
                 <EmployeesAddForm addNewEmployee={this.addNewEmployee}/>
             </div>
