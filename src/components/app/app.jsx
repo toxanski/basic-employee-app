@@ -18,6 +18,8 @@ class App extends Component {
                 { name: 'Alfred T.', salary: 630, increase: true, rise: false, id: 2},
                 { name: 'James K.', salary: 1710, increase: false, rise: false, id: 3},
             ],
+            term: '',
+            filter: 'all',
         }
     }
 
@@ -46,21 +48,56 @@ class App extends Component {
         }));
     };
 
-    countPremiumEmployees = () => this.state.data.filter(item => item.increase).length
+    countPremiumEmployees = () => this.state.data.filter(item => item.increase).length;
+
+    searchEmployees = (items, term) => {
+        if (!term.length) return items;
+
+        return items.filter(item => item.name.indexOf(term) > -1);
+    };
+
+    onUpdateTerm = (term) => {
+        this.setState({
+            term
+        })
+    };
+
+    changeFilter = (items, filterName) => {
+        switch (filterName) {
+            case 'all' || '':
+                return items;
+            case 'rise':
+                return items.filter(item => item.rise)
+            case 'salary':
+                return items.filter(item => item.salary >= 1000);
+        }
+    };
+
+    onUpdateFilter = (filterName) => {
+        this.setState(({ filter }) => ({
+            filter: filterName
+        }));
+    };
 
 
     render() {
+        const { data, term, filter } = this.state;
+        const visibleEmployees = term.length
+            ? this.searchEmployees(data, term)
+            : this.changeFilter(data, filter)
+
+        console.log(this.changeFilter(data, filter))
         return (
             <div className="app">
                 <AppInfo allEmployees={this.state.data.length} countPremiumEmployees={this.countPremiumEmployees}/>
 
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel onUpdateTerm={this.onUpdateTerm}/>
+                    <AppFilter onUpdateFilter={this.onUpdateFilter} />
                 </div>
 
                 <EmployeesList
-                    data={this.state.data}
+                    data={visibleEmployees}
                     deleteEmployee={this.deleteEmployee}
                     onToggleProp={this.onToggleProp} />
 
