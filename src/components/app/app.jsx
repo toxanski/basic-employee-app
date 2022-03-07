@@ -64,12 +64,12 @@ class App extends Component {
 
     changeFilter = (items, filterName) => {
         switch (filterName) {
-            case 'all' || '':
-                return items;
             case 'rise':
                 return items.filter(item => item.rise)
             case 'salary':
                 return items.filter(item => item.salary >= 1000);
+            default:
+                return items;
         }
     };
 
@@ -82,18 +82,17 @@ class App extends Component {
 
     render() {
         const { data, term, filter } = this.state;
-        const visibleEmployees = term.length
-            ? this.searchEmployees(data, term)
-            : this.changeFilter(data, filter)
 
-        console.log(this.changeFilter(data, filter))
+        // Сначало поиску по кнопкам, затем по категориям
+        const visibleEmployees = this.changeFilter(this.searchEmployees(data, term), filter);
+
         return (
             <div className="app">
                 <AppInfo allEmployees={this.state.data.length} countPremiumEmployees={this.countPremiumEmployees}/>
 
                 <div className="search-panel">
                     <SearchPanel onUpdateTerm={this.onUpdateTerm}/>
-                    <AppFilter onUpdateFilter={this.onUpdateFilter} />
+                    <AppFilter onUpdateFilter={this.onUpdateFilter} filter={filter}/>
                 </div>
 
                 <EmployeesList

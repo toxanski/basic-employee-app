@@ -6,12 +6,18 @@ class AppFilter extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            buttonsData: [
+                { name: 'all', label: 'Все сотрудники' },
+                { name: 'rise', label: 'На повышение' },
+                { name: 'salary', label: 'З/П больше 1000$' },
+            ],
             filter: ''
         }
     }
 
     onChangeFilter = (e) => {
-        const filter = e.currentTarget.dataset.filter;
+        const filter = e.target.dataset.filter;
+        console.log(e.target)
         this.setState(({ filter }) => ({
             filter
         }))
@@ -20,26 +26,24 @@ class AppFilter extends Component {
     };
 
     render() {
+        const button = this.state.buttonsData.map(btn => {
+            const active = this.props.filter === btn.name;
+            const clazz = active ? 'btn-light' : 'btn-outline-light';
+
+            return (
+                <button type="button"
+                        className={`btn ${clazz}`}
+                        data-filter={btn.name}
+                        key={btn.name}
+                        onClick={this.onChangeFilter}>
+                    {btn.label}
+                </button>
+            );
+        });
+
         return (
             <div className="btn-group">
-                <button type="button"
-                        className="btn btn-light"
-                        data-filter="all"
-                        onClick={this.onChangeFilter}>
-                    Все сотрудники
-                </button>
-                <button type="button"
-                        className="btn btn-outline-light"
-                        data-filter="rise"
-                        onClick={this.onChangeFilter}>
-                    На повышение
-                </button>
-                <button type="button"
-                        className="btn btn-outline-light"
-                        data-filter="salary"
-                        onClick={this.onChangeFilter}>
-                    З/П больше 1000$
-                </button>
+                {button}
             </div>
         )
     }
